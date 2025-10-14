@@ -10,6 +10,7 @@ class NewsDB implements INewsDB {
     }
     
     public function __construct() {
+        date_default_timezone_set('Europe/Moscow');
         $dbExists = file_exists(self::DB_NAME);
         $this->_db = new SQLite3(self::DB_NAME);
 
