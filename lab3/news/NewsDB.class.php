@@ -76,29 +76,23 @@ class NewsDB implements INewsDB {
      * @return array|false - результат выборки в виде массива или false при ошибке
      */
     public function getNews() {
-        // SQL-запрос для выборки всех данных из таблицы msgs в обратном порядке
-        // С объединением двух таблиц
         $sql = "SELECT msgs.id as id, title, category.name as category, 
                       description, source, datetime
                 FROM msgs, category
                 WHERE category.id = msgs.category
                 ORDER BY msgs.id DESC";
         
-        // Выполнение запроса
         $result = $this->_db->query($sql);
         
-        // Проверка результата выполнения запроса
         if (!$result) {
-            return false;  // Возвращаем false в случае ошибки
+            return false; 
         }
         
-        // Собираем все записи в массив
         $news = array();
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
             $news[] = $row;
         }
         
-        // Возвращаем массив с новостями
         return $news;
     }
 
