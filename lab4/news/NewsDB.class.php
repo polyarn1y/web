@@ -2,6 +2,7 @@
 require_once 'INewsDB.class.php';
 
 class NewsDB implements INewsDB, IteratorAggregate {
+	date_default_timezone_set('Europe/Moscow');
     const DB_NAME = 'news.db';
     private $_db;
     
