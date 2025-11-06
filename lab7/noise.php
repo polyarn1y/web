@@ -1,62 +1,56 @@
 <?php
 session_start();
 
+$backgroundPath = 'noise.jpg';
+$fontsDir = 'fonts/';
 
-$img = @imagecreatefromjpeg('noise.jpg');
-
-if (!$img) {
-    die('Ошибка: не удалось загрузить noise.jpg. Проверьте путь к файлу.');
+$background = imagecreatefromjpeg($backgroundPath);
+if (!$background) {
+    die('Ошибка загрузки фонового изображения.');
 }
 
-$width = imagesx($img);
-$height = imagesy($img);
+$textColor = imagecolorallocate($background, 0, 0, 0);
 
-$textColor = imagecolorallocate($img, 0, 0, 0);
-
-$fonts = [
-    __DIR__ . '/fonts/bellb.ttf', 
-    __DIR__ . '/fonts/georgia.ttf'
-];
-
-foreach ($fonts as $font) {
-    if (!file_exists($font)) {
-        die("Ошибка: шрифт не найден - $font");
-    }
-}
-
-$characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-$captchaLength = rand(5, 6);
+$characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 $captchaString = '';
-
-for ($i = 0; $i < $captchaLength; $i++) {
+$length = rand(5, 6);
+for ($i = 0; $i < $length; $i++) {
     $captchaString .= $characters[rand(0, strlen($characters) - 1)];
 }
 
-$_SESSION['captcha'] = $captchaString;
+$_SESSION['captcha_string'] = $captchaString;
+
+$fonts = [
+    $fontsDir . 'bellb.ttf',
+    $fontsDir . 'georgia.ttf'
+];
 
 $x = 20;
-$y = 35;
+$y = 30;
 
 for ($i = 0; $i < strlen($captchaString); $i++) {
-    $fontSize = rand(18, 30);
-    
-    $angle = rand(-15, 15);
+    $char = $captchaString[$i];
     
     $font = $fonts[array_rand($fonts)];
+    $fontSize = rand(18, 30);  
+    $angle = rand(-30, 30);  
     
-    $result = imagettftext($img, $fontSize, $angle, $x, $y, $textColor, $font, $captchaString[$i]);
-    
-    if ($result === false) {
-        imagedestroy($img);
-        die("Ошибка imagettftext: проверьте поддержку FreeType");
-    }
+    imagettftext(
+        $background,
+        $fontSize,
+        $angle,
+        $x,
+        $y,
+        $textColor,
+        $font,
+        $char
+    );
     
     $x += 40;
 }
 
 header('Content-Type: image/jpeg');
-header('Cache-Control: no-cache, must-revalidate');
-imagejpeg($img, null, 50);
+imagejpeg($background, null, 50);
 
-imagedestroy($img);
+imagedestroy($background);
 ?>
