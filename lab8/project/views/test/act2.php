@@ -1,0 +1,1 @@
+<p><?= htmlspecialchars($msg ?? 'OK') ?></p> 
